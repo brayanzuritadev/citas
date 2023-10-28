@@ -48,7 +48,7 @@ func ExecuteLambda(ctx context.Context, request events.APIGatewayProxyRequest) (
 		return res, nil
 	}
 
-	path := strings.Replace(request.PathParameters["daily"], os.Getenv("UrlPrefix"), "", -1)
+	path := strings.Replace(request.PathParameters["dailygo"], os.Getenv("UrlPrefix"), "", -1)
 	fmt.Println(path + "este es el path")
 	awsgo.Ctx = context.WithValue(awsgo.Ctx, models.Key("path"), path)
 	awsgo.Ctx = context.WithValue(awsgo.Ctx, models.Key("method"), request.HTTPMethod)
@@ -75,7 +75,7 @@ func ExecuteLambda(ctx context.Context, request events.APIGatewayProxyRequest) (
 	}
 
 	responseApi := handlers.Handlers(awsgo.Ctx, request)
-	if responseApi.CustomResp != nil {
+	if responseApi.CustomResp == nil {
 		res = &events.APIGatewayProxyResponse{
 			StatusCode: responseApi.Status,
 			Body:       responseApi.Message,
