@@ -28,19 +28,17 @@ func Handlers(ctx context.Context, request events.APIGatewayProxyRequest) models
 
 	switch ctx.Value(models.Key("method")).(string) {
 	case "POST":
-		fmt.Println("Process no bien ssd")
 		switch ctx.Value(models.Key("path")).(string) {
 		case "register":
-			fmt.Println("Process no bien ss")
 			return routers.Register(ctx)
 		case "login":
-			fmt.Println("Process no bien ss")
 			return routers.Login(ctx)
 		}
 
 	case "GET":
 		switch ctx.Value(models.Key("path")).(string) {
-
+		case "viewprofile":
+			return routers.ViewProfile(request)
 		}
 	case "PUT":
 		switch ctx.Value(models.Key("path")).(string) {
@@ -59,7 +57,7 @@ func Handlers(ctx context.Context, request events.APIGatewayProxyRequest) models
 func validationAuthorization(ctx context.Context, request events.APIGatewayProxyRequest) (bool, int, string, models.Claim) {
 	path := ctx.Value(models.Key("path")).(string)
 
-	if path == "register" {
+	if path == "register" || path == "login" {
 		return true, 200, "", models.Claim{}
 	}
 

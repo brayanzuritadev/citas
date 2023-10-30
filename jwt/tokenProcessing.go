@@ -4,6 +4,7 @@ import (
 	"errors"
 	"strings"
 
+	"github.com/brayanzuritadev/citas/db"
 	"github.com/brayanzuritadev/citas/models"
 	jwt "github.com/golang-jwt/jwt/v5"
 )
@@ -29,7 +30,12 @@ func TokenProcess(tk string, JWTSign string) (*models.Claim, bool, string, error
 	})
 
 	if err == nil {
-		//rutina para revisar la base de datos
+		_, find, _ := db.ReviewExistUser(claims.Email)
+		if find {
+			Email = claims.Email
+			IDUser = claims.ID.Hex()
+		}
+		return &claims, find, IDUser, nil
 	}
 
 	if !tkn.Valid {

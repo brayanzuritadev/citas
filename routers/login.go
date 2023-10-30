@@ -3,6 +3,7 @@ package routers
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -17,6 +18,12 @@ func Login(ctx context.Context) models.ResponseApi {
 	var responseApi models.ResponseApi
 
 	responseApi.Status = 400
+
+	if value, ok := ctx.Value(models.Key("body")).(string); ok {
+		fmt.Println(value)
+	} else {
+		fmt.Println("son tonteras")
+	}
 
 	body := ctx.Value(models.Key("body")).(string)
 
