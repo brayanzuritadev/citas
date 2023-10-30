@@ -19,7 +19,7 @@ func ReviewExistUser(email string) (models.User, bool, string) {
 	condition := bson.M{"email": email}
 
 	var user models.User
-	err := col.FindOne(ctx, condition).Decode(user)
+	err := col.FindOne(ctx, condition).Decode(&user)
 
 	ID := user.ID.Hex()
 	if err != nil {

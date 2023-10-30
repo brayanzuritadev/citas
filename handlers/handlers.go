@@ -33,7 +33,11 @@ func Handlers(ctx context.Context, request events.APIGatewayProxyRequest) models
 		case "register":
 			fmt.Println("Process no bien ss")
 			return routers.Register(ctx)
+		case "login":
+			fmt.Println("Process no bien ss")
+			return routers.Login(ctx)
 		}
+
 	case "GET":
 		switch ctx.Value(models.Key("path")).(string) {
 
