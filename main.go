@@ -17,6 +17,7 @@ import (
 
 func main() {
 	lambda.Start(ExecuteLambda)
+	defer db.CloseConnection()
 }
 
 func ExecuteLambda(ctx context.Context, request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResponse, error) {
