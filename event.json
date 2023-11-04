@@ -1,0 +1,17 @@
+{
+  "httpMethod": "POST",
+  "path": "/register",
+  "pathParameters": {
+    "dailygo": "register"
+  },
+  "headers": {
+    "Accept": "application/json",
+    "Content-Type": "application/json"
+  },
+  "body": "{\"firstname\":\"Johndfg\",\"lastname\":\"Doe\",\"dateBirth\":\"2000-01-01T00:00:00Z\",\"email\":\"johndoe1@example21.com\",\"password\":\"password123\",\"avatar\":\"avatar_url\"}",
+  "queryStringParameters": null,
+  "requestContext": {
+    "resourcePath": "/myendpoint/{dailygo+}",
+    "httpMethod": "POST"
+  }
+}
