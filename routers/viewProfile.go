@@ -1,15 +1,6 @@
 package routers
 
-import (
-	"encoding/json"
-	"fmt"
-
-	"github.com/aws/aws-lambda-go/events"
-	"github.com/brayanzuritadev/citas/db"
-	"github.com/brayanzuritadev/citas/models"
-)
-
-func ViewProfile(request events.APIGatewayProxyRequest) models.ResponseApi {
+/*func ViewProfile(request events.APIGatewayProxyRequest) models.ResponseApi {
 
 	var r models.ResponseApi
 	r.Status = 400
@@ -40,4 +31,4 @@ func ViewProfile(request events.APIGatewayProxyRequest) models.ResponseApi {
 	r.Message = string(respJson)
 	return r
 
-}
+}*/

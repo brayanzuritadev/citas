@@ -1,4 +1,9 @@
-subo.bt
+deploy.cmd
 main
 main.exe
 main.zip
+template.yml
+events
+.aws-sam
+.vscode
+.idea
