@@ -17,7 +17,6 @@ import (
 
 func main() {
 	lambda.Start(ExecuteLambda)
-	defer db.CloseConnection()
 }
 
 func ExecuteLambda(ctx context.Context, request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResponse, error) {
@@ -50,7 +49,8 @@ func ExecuteLambda(ctx context.Context, request events.APIGatewayProxyRequest) (
 	}
 
 	path := strings.Replace(request.PathParameters["dailygo"], os.Getenv("UrlPrefix"), "", -1)
-	fmt.Println(path + "este es el path")
+	fmt.Println(path)
+
 	awsgo.Ctx = context.WithValue(awsgo.Ctx, models.Key("path"), path)
 	awsgo.Ctx = context.WithValue(awsgo.Ctx, models.Key("method"), request.HTTPMethod)
 	awsgo.Ctx = context.WithValue(awsgo.Ctx, models.Key("username"), SecretModel.Username)
@@ -63,6 +63,7 @@ func ExecuteLambda(ctx context.Context, request events.APIGatewayProxyRequest) (
 
 	//review connection db
 	err = db.ConnetionDb(awsgo.Ctx)
+	defer db.CloseConnection()
 
 	if err != nil {
 		res = &events.APIGatewayProxyResponse{

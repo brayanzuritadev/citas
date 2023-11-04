@@ -11,7 +11,7 @@ import (
 )
 
 func Handlers(ctx context.Context, request events.APIGatewayProxyRequest) models.ResponseApi {
-	fmt.Println("Processssss " + ctx.Value(models.Key("path")).(string) + " > " + ctx.Value(models.Key("method")).(string))
+	fmt.Println("Endpoint " + ctx.Value(models.Key("path")).(string) + " > " + ctx.Value(models.Key("method")).(string))
 
 	var r models.ResponseApi
 
@@ -20,7 +20,6 @@ func Handlers(ctx context.Context, request events.APIGatewayProxyRequest) models
 	isOk, statusCode, msg, _ := validationAuthorization(ctx, request)
 
 	if !isOk {
-		fmt.Println("Process no bien ")
 		r.Status = statusCode
 		r.Message = msg
 		return r
@@ -38,7 +37,7 @@ func Handlers(ctx context.Context, request events.APIGatewayProxyRequest) models
 	case "GET":
 		switch ctx.Value(models.Key("path")).(string) {
 		case "viewprofile":
-			return routers.ViewProfile(request)
+			//return routers.ViewProfile(request)
 		}
 	case "PUT":
 		switch ctx.Value(models.Key("path")).(string) {

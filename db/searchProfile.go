@@ -1,16 +1,7 @@
 package db
 
-import (
-	"context"
-	"fmt"
-
-	"github.com/brayanzuritadev/citas/models"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-)
-
-func SearchProfile(Id string) (models.User, error) {
-	ctx := context.TODO()
+func SearchProfile(Id string) error {
+	/*ctx := context.TODO()
 	db := MongoCN.Database(DatabaseName)
 	col := db.Collection("User")
 	var profile models.User
@@ -26,7 +17,7 @@ func SearchProfile(Id string) (models.User, error) {
 	if err != nil {
 		fmt.Println("An error ocurred while seraching the user " + err.Error() + profile.Email + objId.Hex())
 		return profile, err
-	}
+	}*/
 
-	return profile, nil
+	return nil
 }

@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/brayanzuritadev/citas/models"
 	"github.com/brayanzuritadev/citas/db"
+	"github.com/brayanzuritadev/citas/models"
 )
 
 func Register(ctx context.Context) models.ResponseApi {
@@ -38,7 +38,7 @@ func Register(ctx context.Context) models.ResponseApi {
 		return response
 	}
 
-	_, find, _ := db.ReviewExistUser(user.Email)
+	_, find := db.GetUser(user.Email)
 
 	if find {
 		response.Message = "There is already a user with this email"

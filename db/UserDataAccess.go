@@ -1,50 +1,74 @@
 package db
 
 import (
-	"context"
+	"database/sql"
+	"fmt"
 
 	"github.com/brayanzuritadev/citas/models"
 	"github.com/brayanzuritadev/citas/tools"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func ReviewExistUser(email string) (models.User, bool, string) {
-	ctx := context.TODO()
-
-	db := MongoCN.Database(DatabaseName)
-
-	col := db.Collection("User")
-
-	condition := bson.M{"email": email}
-
+func GetUser(email string) (models.User, bool) {
 	var user models.User
-	err := col.FindOne(ctx, condition).Decode(&user)
 
-	ID := user.ID.Hex()
+	query := "SELECT UserId, FirstName, LastName, DateBirth, Email, Password, Avatar FROM [User] WHERE Email = @Email"
+
+	rows, err := SQLDB.Query(query, sql.Named("Email", email))
+
 	if err != nil {
-		return user, false, ID
+		fmt.Println("Error executing SQL query:", err)
+		return user, false
+	}
+	defer rows.Close()
+
+	if rows.Next() {
+		err := rows.Scan(&user.UserId, &user.FirstName, &user.LastName, &user.DateBirth, &user.Email, &user.Password, &user.Avatar)
+		if err != nil {
+			fmt.Println("Error scanning row:", err)
+			return user, false
+		}
+		fmt.Println("User found:", user)
+		return user, true
 	}
 
-	return user, true, ID
+	fmt.Println("No user found with email:", email)
+	return user, false
 }
 
-func InsertUser(u models.User) (string, bool, error) {
-	ctx := context.TODO()
-
-	db := MongoCN.Database(DatabaseName)
-
-	col := db.Collection("User")
-
+func InsertUser(u models.User) (int, bool, error) {
+	fmt.Println(u.Password)
 	u.Password, _ = tools.PasswordEncrypt(u.Password)
+	fmt.Println(u.Password)
+	var userId int
 
-	result, err := col.InsertOne(ctx, u)
+	procedureName := "sp_InsertUser"
 
+	query := fmt.Sprintf("EXEC %s @FirstName, @LastName, @DateBirth, @Email, @Password, @Avatar", procedureName)
+
+	stmt, err := SQLDB.Prepare(query)
 	if err != nil {
-		return "", false, err
+		fmt.Println("aqui esta el error" + err.Error())
+		return 0, false, err
 	}
 
-	objID, _ := result.InsertedID.(primitive.ObjectID)
+	defer func(stmt *sql.Stmt) {
+		err := stmt.Close()
+		if err != nil {
+			fmt.Println("The statement was not closed")
+		}
+	}(stmt)
 
-	return objID.String(), true, nil
+	err = stmt.QueryRow(
+		sql.Named("FirstName", u.FirstName),
+		sql.Named("LastName", u.LastName),
+		sql.Named("DateBirth", u.DateBirth),
+		sql.Named("Email", u.Email),
+		sql.Named("Password", u.Password),
+		sql.Named("Avatar", u.Avatar)).Scan(&userId)
+
+	if err != nil {
+		fmt.Println("aqui esta el error2" + err.Error() + u.FirstName)
+		return 0, false, err
+	}
+	return userId, true, nil
 }

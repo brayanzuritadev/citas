@@ -30,6 +30,7 @@ func Login(ctx context.Context) models.ResponseApi {
 	err := json.Unmarshal([]byte(body), &user)
 
 	if err != nil {
+		fmt.Println("s")
 		responseApi.Message = "Email or Password invalid" + err.Error()
 		return responseApi
 	}
