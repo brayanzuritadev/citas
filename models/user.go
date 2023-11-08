@@ -12,4 +12,6 @@ type User struct {
 	Email     string
 	Password  string
 	Avatar    string
+	IsDeleted bool
+	IsLocked  bool
 }

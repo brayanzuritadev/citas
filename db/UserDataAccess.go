@@ -11,7 +11,7 @@ import (
 func GetUser(email string) (models.User, bool) {
 	var user models.User
 
-	query := "SELECT UserId, FirstName, LastName, DateBirth, Email, Password, Avatar FROM [User] WHERE Email = @Email"
+	query := "SELECT UserId, FirstName, LastName, DateBirth, Email, Password, Avatar FROM [Users] WHERE Email = @Email"
 
 	rows, err := SQLDB.Query(query, sql.Named("Email", email))
 
@@ -43,7 +43,7 @@ func InsertUser(u models.User) (int, bool, error) {
 
 	procedureName := "sp_InsertUser"
 
-	query := fmt.Sprintf("EXEC %s @FirstName, @LastName, @DateBirth, @Email, @Password, @Avatar", procedureName)
+	query := fmt.Sprintf("EXEC %s @FirstName, @LastName, @BirthDate, @Email, @Password, @Avatar, @IsDeleted, @IsLocked", procedureName)
 
 	stmt, err := SQLDB.Prepare(query)
 	if err != nil {
@@ -61,10 +61,13 @@ func InsertUser(u models.User) (int, bool, error) {
 	err = stmt.QueryRow(
 		sql.Named("FirstName", u.FirstName),
 		sql.Named("LastName", u.LastName),
-		sql.Named("DateBirth", u.DateBirth),
+		sql.Named("BirthDate", u.DateBirth),
 		sql.Named("Email", u.Email),
 		sql.Named("Password", u.Password),
-		sql.Named("Avatar", u.Avatar)).Scan(&userId)
+		sql.Named("Avatar", u.Avatar),
+		sql.Named("IsDeleted", u.IsDeleted),
+		sql.Named("IsLocked", u.IsLocked),
+	).Scan(&userId)
 
 	if err != nil {
 		fmt.Println("aqui esta el error2" + err.Error() + u.FirstName)
