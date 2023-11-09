@@ -30,12 +30,12 @@ func TokenProcess(tk string, JWTSign string) (*models.Claim, bool, string, error
 	})
 
 	if err == nil {
-		_, find := db.GetUser(claims.Email)
-		if find {
+		_, err = db.GetUser(claims.Email)
+		if err == nil {
 			Email = claims.Email
 			IDUser = claims.ID.Hex()
 		}
-		return &claims, find, IDUser, nil
+		return &claims, true, IDUser, nil
 	}
 
 	if !tkn.Valid {

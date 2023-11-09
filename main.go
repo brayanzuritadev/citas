@@ -16,36 +16,21 @@ import (
 )
 
 func main() {
+	awsgo.InitAWS()
 	lambda.Start(ExecuteLambda)
 }
 
 func ExecuteLambda(ctx context.Context, request events.APIGatewayProxyRequest) (*events.APIGatewayProxyResponse, error) {
 	var res *events.APIGatewayProxyResponse
 
-	awsgo.InitAWS()
-
 	if !ValidParameters() {
-		res = &events.APIGatewayProxyResponse{
-			StatusCode: 400,
-			Body:       "Error in environment variables. Must include 'SecretName', 'BucketName', 'UrlPrefix'",
-			Headers: map[string]string{
-				"Content-Type": "application/json",
-			},
-		}
-		return res, nil
+		return ErrorResponse(400, "Error in environment variables. Must include 'SecretName', 'BucketName', 'UrlPrefix'")
 	}
 
 	SecretModel, err := secretmanager.GetSecret(os.Getenv("SecretName"))
 
 	if err != nil {
-		res = &events.APIGatewayProxyResponse{
-			StatusCode: 400,
-			Body:       "Error to read the secret " + err.Error(),
-			Headers: map[string]string{
-				"Content-Type": "application/json",
-			},
-		}
-		return res, nil
+		return ErrorResponse(400, "Error reading Secret "+err.Error())
 	}
 
 	path := strings.Replace(request.PathParameters["dailygo"], os.Getenv("UrlPrefix"), "", -1)
@@ -66,14 +51,7 @@ func ExecuteLambda(ctx context.Context, request events.APIGatewayProxyRequest) (
 	defer db.CloseConnection()
 
 	if err != nil {
-		res = &events.APIGatewayProxyResponse{
-			StatusCode: 500,
-			Body:       "Error connect to the db " + err.Error(),
-			Headers: map[string]string{
-				"Content-Type": "application/json",
-			},
-		}
-		return res, nil
+		return ErrorResponse(500, "Error connecting to database "+err.Error())
 	}
 
 	responseApi := handlers.Handlers(awsgo.Ctx, request)
@@ -89,6 +67,16 @@ func ExecuteLambda(ctx context.Context, request events.APIGatewayProxyRequest) (
 	} else {
 		return responseApi.CustomResp, nil
 	}
+}
+
+func ErrorResponse(statusCode int, message string) (*events.APIGatewayProxyResponse, error) {
+	return &events.APIGatewayProxyResponse{
+		StatusCode: statusCode,
+		Body:       message,
+		Headers: map[string]string{
+			"Content-Type": "application/json",
+		},
+	}, nil
 }
 
 func ValidParameters() bool {

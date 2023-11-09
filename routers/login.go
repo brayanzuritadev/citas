@@ -42,7 +42,7 @@ func Login(ctx context.Context) models.ResponseApi {
 
 	userData, exist := db.LoginTry(user.Email, user.Password)
 	if !exist {
-		responseApi.Message = "Email and Password invalid"
+		responseApi.Message = "Email and Password invalid "
 		return responseApi
 	}
 

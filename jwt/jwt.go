@@ -17,7 +17,7 @@ func GenerateJWT(ctx context.Context, user models.User) (string, error) {
 		"email":     user.Email,
 		"firstname": user.FirstName,
 		"lastname":  user.LastName,
-		"datebirth": user.DateBirth,
+		"datebirth": user.BirthDate,
 		"userid":    user.UserId,
 		"exp":       time.Now().Add(time.Hour * 24).Unix(),
 	}

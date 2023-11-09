@@ -8,31 +8,31 @@ import (
 	"github.com/brayanzuritadev/citas/tools"
 )
 
-func GetUser(email string) (models.User, bool) {
+func GetUser(email string) (models.User, error) {
 	var user models.User
 
-	query := "SELECT UserId, FirstName, LastName, DateBirth, Email, Password, Avatar FROM [Users] WHERE Email = @Email"
+	query := "SELECT * FROM [User] WHERE Email = @Email"
 
 	rows, err := SQLDB.Query(query, sql.Named("Email", email))
 
 	if err != nil {
 		fmt.Println("Error executing SQL query:", err)
-		return user, false
+		return user, err
 	}
 	defer rows.Close()
 
 	if rows.Next() {
-		err := rows.Scan(&user.UserId, &user.FirstName, &user.LastName, &user.DateBirth, &user.Email, &user.Password, &user.Avatar)
+		err := rows.Scan(&user.UserId, &user.FirstName, &user.LastName, &user.BirthDate, &user.Email, &user.Password, &user.Avatar, &user.IsDeleted, &user.IsLocked)
 		if err != nil {
 			fmt.Println("Error scanning row:", err)
-			return user, false
+			return user, err
 		}
 		fmt.Println("User found:", user)
-		return user, true
+		return user, err
 	}
 
 	fmt.Println("No user found with email:", email)
-	return user, false
+	return user, nil
 }
 
 func InsertUser(u models.User) (int, bool, error) {
@@ -61,7 +61,7 @@ func InsertUser(u models.User) (int, bool, error) {
 	err = stmt.QueryRow(
 		sql.Named("FirstName", u.FirstName),
 		sql.Named("LastName", u.LastName),
-		sql.Named("BirthDate", u.DateBirth),
+		sql.Named("BirthDate", u.BirthDate),
 		sql.Named("Email", u.Email),
 		sql.Named("Password", u.Password),
 		sql.Named("Avatar", u.Avatar),

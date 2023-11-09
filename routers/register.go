@@ -38,10 +38,16 @@ func Register(ctx context.Context) models.ResponseApi {
 		return response
 	}
 
-	_, find := db.GetUser(user.Email)
+	u, err := db.GetUser(user.Email)
 
-	if find {
-		response.Message = "There is already a user with this email"
+	if err != nil {
+		response.Message = err.Error()
+		fmt.Println(response.Message)
+		return response
+	}
+
+	if u.Email == user.Email {
+		response.Message = "There is already a user with that email"
 		fmt.Println(response.Message)
 		return response
 	}

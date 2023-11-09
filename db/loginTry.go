@@ -8,15 +8,16 @@ import (
 
 func LoginTry(email string, password string) (models.User, bool) {
 
-	user, find := GetUser(email)
-	if !find {
+	user, err := GetUser(email)
+	if err != nil {
+		fmt.Print(err.Error())
 		return user, false
 	}
 
 	passwordBytes := []byte(password)
 	passwordDB := []byte(user.Password)
 
-	err := bcrypt.CompareHashAndPassword(passwordDB, passwordBytes)
+	err = bcrypt.CompareHashAndPassword(passwordDB, passwordBytes)
 
 	if err != nil {
 		fmt.Print(err.Error())
